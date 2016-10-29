@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_work1" default="compile.module.work1">
+  <dirname property="module.work1.basedir" file="${ant.file.module_work1}"/>
+  
+  <property name="module.jdk.home.work1" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.work1" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.work1" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.work1" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="work1.output.dir" value="${module.work1.basedir}/out/production/work1"/>
+  <property name="work1.testoutput.dir" value="${module.work1.basedir}/out/test/work1"/>
+  
+  <path id="work1.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="work1.module.production.classpath">
+    <path refid="${module.jdk.classpath.work1}"/>
+  </path>
+  
+  <path id="work1.runtime.production.module.classpath">
+    <pathelement location="${work1.output.dir}"/>
+  </path>
+  
+  <path id="work1.module.classpath">
+    <path refid="${module.jdk.classpath.work1}"/>
+    <pathelement location="${work1.output.dir}"/>
+  </path>
+  
+  <path id="work1.runtime.module.classpath">
+    <pathelement location="${work1.testoutput.dir}"/>
+    <pathelement location="${work1.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.work1">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.work1">
+    <patternset refid="excluded.from.module.work1"/>
+  </patternset>
+  
+  <path id="work1.module.sourcepath">
+    <dirset dir="${module.work1.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.work1" depends="compile.module.work1.production,compile.module.work1.tests" description="Compile module work1"/>
+  
+  <target name="compile.module.work1.production" depends="register.custom.compilers" description="Compile module work1; production classes">
+    <mkdir dir="${work1.output.dir}"/>
+    <javac2 destdir="${work1.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.work1}/javac">
+      <compilerarg line="${compiler.args.work1}"/>
+      <bootclasspath refid="work1.module.bootclasspath"/>
+      <classpath refid="work1.module.production.classpath"/>
+      <src refid="work1.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.work1"/>
+    </javac2>
+    
+    <copy todir="${work1.output.dir}">
+      <fileset dir="${module.work1.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.work1.tests" depends="register.custom.compilers,compile.module.work1.production" description="compile module work1; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.work1" description="cleanup module">
+    <delete dir="${work1.output.dir}"/>
+    <delete dir="${work1.testoutput.dir}"/>
+  </target>
+</project>
